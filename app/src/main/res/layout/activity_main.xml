@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp">
+
+    <TextView
+        android:text="Καλώς ήρθες στο BrokeNoMore!"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:layout_marginBottom="24dp"/>
+
+    <Button
+        android:id="@+id/btnAddExpense"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Καταχώρηση Εξόδου"/>
+
+    <Button
+        android:id="@+id/btnChallenges"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Πρόκληση Ημέρας"
+        android:layout_marginTop="16dp"/>
+
+</LinearLayout>
