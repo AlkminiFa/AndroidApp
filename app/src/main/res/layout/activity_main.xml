@@ -5,19 +5,54 @@
     android:orientation="vertical"
     android:gravity="center"
     android:padding="16dp">
-
     <TextView
-        android:text="Καλώς ήρθες στο BrokeNoMore!"
+        android:id="@+id/budgetDisplay"
+        android:text="Τρέχον budget: -"
+        android:textSize="22sp"
+        android:textStyle="bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:id="@+id/tvBudget"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Υπόλοιπο: 0€"
         android:textSize="18sp"
-        android:layout_marginBottom="24dp"/>
+        android:layout_marginBottom="16dp"/>
+
+
+    <EditText
+        android:id="@+id/budgetInput"
+        android:hint="Καταχώρησε το budget σου (€)"
+        android:inputType="numberDecimal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp" />
+
+    <Button
+        android:id="@+id/btnSaveBudget"
+        android:text="Αποθήκευση Budget"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp" />
+
+    <Button
+        android:id="@+id/btnChangeBudget"
+        android:text="Αλλαγή Budget"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+
 
     <Button
         android:id="@+id/btnAddExpense"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Καταχώρηση Εξόδου"/>
+        android:text="Καταχώρηση Εξόδου"
+        android:layout_marginTop="16dp"/>
 
     <Button
         android:id="@+id/btnChallenges"
@@ -25,5 +60,6 @@
         android:layout_height="wrap_content"
         android:text="Πρόκληση Ημέρας"
         android:layout_marginTop="16dp"/>
+
 
 </LinearLayout>

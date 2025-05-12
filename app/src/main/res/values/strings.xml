@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">BrokeNoMore</string>
+
+    <string-array name="expense_categories">
+        <item>Επέλεξε κατηγορία</item>
+        <item>Καφές</item>
+        <item>Φαγητό</item>
+        <item>Μετακίνηση</item>
+        <item>Διασκέδαση</item>
+        <item>Άλλο</item>
+    </string-array>
+
 </resources>
+
+
+

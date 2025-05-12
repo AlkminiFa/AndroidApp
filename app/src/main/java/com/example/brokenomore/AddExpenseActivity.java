@@ -1,12 +1,15 @@
 package com.example.brokenomore;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 public class AddExpenseActivity extends AppCompatActivity {
 
@@ -14,5 +17,57 @@ public class AddExpenseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_expense);
+
+        Spinner spinnerCategory = findViewById(R.id.spinnerCategory);
+        EditText etAmount = findViewById(R.id.etAmount);
+        Button btnSave = findViewById(R.id.btnSaveExpense);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.expense_categories, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerCategory.setAdapter(adapter);
+
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String amountText = etAmount.getText().toString().trim();
+                String selectedCategory = spinnerCategory.getSelectedItem().toString();
+
+                if (selectedCategory.equals("Επέλεξε κατηγορία")) {
+                    Toast.makeText(AddExpenseActivity.this, "Παρακαλώ επίλεξε κατηγορία", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (amountText.isEmpty()) {
+                    Toast.makeText(AddExpenseActivity.this, "Συμπλήρωσε ποσό", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                float amount;
+                try {
+                    amount = Float.parseFloat(amountText);
+                } catch (NumberFormatException e) {
+                    Toast.makeText(AddExpenseActivity.this, "Μη έγκυρο ποσό", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                SharedPreferences prefs = getSharedPreferences("BrokeNoMorePrefs", MODE_PRIVATE);
+                float currentBudget = prefs.getFloat("budget", 0f);
+
+                if (amount > currentBudget) {
+                    Toast.makeText(AddExpenseActivity.this, "Το ποσό ξεπερνά το διαθέσιμο budget!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                float updatedBudget = currentBudget - amount;
+                prefs.edit().putFloat("budget", updatedBudget).apply();
+
+                Toast.makeText(AddExpenseActivity.this,
+                        "Καταχωρήθηκε: " + amount + "€ για " + selectedCategory + "\nΥπόλοιπο: " + updatedBudget + "€",
+                        Toast.LENGTH_LONG).show();
+
+                finish(); // Επιστροφή στην MainActivity
+            }
+        });
     }
 }

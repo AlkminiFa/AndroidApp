@@ -23,13 +23,12 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp" />
 
-    <EditText
-        android:id="@+id/etNote"
-        android:hint="Σημείωση (π.χ. καφές)"
-        android:inputType="text"
+    <Spinner
+        android:id="@+id/spinnerCategory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp" />
+
 
     <Button
         android:id="@+id/btnSaveExpense"
