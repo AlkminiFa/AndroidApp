@@ -69,6 +69,12 @@ public class AddExpenseActivity extends AppCompatActivity {
                         "Καταχωρήθηκε: " + amount + "€ για " + selectedCategory + "\nΥπόλοιπο: " + updatedBudget + "€",
                         Toast.LENGTH_LONG).show();
 
+                // Αποθήκευση ποσού στην αντίστοιχη κατηγορία (προσωρινό, μέχρι να γίνει βάση SQL)
+                String key = "spent_" + selectedCategory;
+                float previous = prefs.getFloat(key, 0f);
+                prefs.edit().putFloat(key, previous + amount).apply();
+
+
                 finish(); // Επιστροφή στην HomeActivity
             }
         });

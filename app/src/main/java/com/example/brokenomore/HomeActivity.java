@@ -11,9 +11,11 @@ import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,7 +25,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -49,6 +55,7 @@ public class HomeActivity extends AppCompatActivity {
         Button changeBudgetBtn = findViewById(R.id.changeBudgetBtn);
         Button addExpenseBtn = findViewById(R.id.addExpenseBtn);
         Button nextDayBtn = findViewById(R.id.nextDayBtn);
+        nextDayBtn.setText("📅 Πρόκληση Ημέρας");
 
         // Κουμπί αλλαγής budget & ημερών
         changeBudgetBtn.setOnClickListener(v -> {
@@ -79,13 +86,26 @@ public class HomeActivity extends AppCompatActivity {
                     float newBudget = Float.parseFloat(budgetText);
                     int newDays = Integer.parseInt(daysText);
 
-                    SharedPreferences prefs = getSharedPreferences("BrokeNoMorePrefs", MODE_PRIVATE);
-                    prefs.edit()
-                            .putFloat("budget", newBudget)
-                            .putInt("daysLeft", newDays)
-                            .apply();
+                    String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
+                    SharedPreferences prefs = getSharedPreferences("BrokeNoMorePrefs", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putFloat("budget", newBudget);
+                    editor.putFloat("initialBudget", newBudget);
+                    editor.putInt("daysLeft", newDays);
+                    editor.putString("lastOpenedDate", today);
+
+                    // ✅ Μηδενισμός εξόδων ανά κατηγορία όταν ξεκινά νέο budget
+                    String[] categories = {"Καφές", "Φαγητό", "Μετακίνηση", "Διασκέδαση", "Άλλο"};
+                    for (String category : categories) {
+                        editor.putFloat("spent_" + category, 0f);
+                    }
+
+                    editor.apply();
                     budgetAmount.setText(String.format(Locale.getDefault(), "%.2f €", newBudget));
+
+                    // ✅ Εμφάνιση των 0% μπάρων αμέσως μετά την αλλαγή budget
+                    showCategoryProgress(newBudget);
                     updateDaysText(newDays);
                 }
             });
@@ -99,11 +119,6 @@ public class HomeActivity extends AppCompatActivity {
             Intent intent = new Intent(HomeActivity.this, AddExpenseActivity.class);
             startActivity(intent);
         });
-
-        // Κουμπί προώθησης ημέρας
-        nextDayBtn.setOnClickListener(v -> {
-            Toast.makeText(this, "Ημέρα προωθήθηκε ✅", Toast.LENGTH_SHORT).show();
-        });
     }
 
     @Override
@@ -111,9 +126,34 @@ public class HomeActivity extends AppCompatActivity {
         super.onResume();
         refreshBudget();
 
-        int days = getSharedPreferences("BrokeNoMorePrefs", MODE_PRIVATE)
-                .getInt("daysLeft", 30); // προεπιλογή 30
-        updateDaysText(days);
+        SharedPreferences prefs = getSharedPreferences("BrokeNoMorePrefs", MODE_PRIVATE);
+        int daysLeft = prefs.getInt("daysLeft", 30);
+        String lastOpened = prefs.getString("lastOpenedDate", "");
+
+        String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+        if (!lastOpened.equals(today)) {
+            try {
+                Date lastDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(lastOpened);
+                Date currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(today);
+                long diff = currentDate.getTime() - lastDate.getTime();
+                int daysPassed = (int) (diff / (1000 * 60 * 60 * 24));
+
+                if (daysPassed > 0 && daysLeft > 0) {
+                    daysLeft = Math.max(0, daysLeft - daysPassed);
+                    prefs.edit().putInt("daysLeft", daysLeft).apply();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            prefs.edit().putString("lastOpenedDate", today).apply();
+        }
+
+        updateDaysText(daysLeft);
+
+        float totalBudget = prefs.getFloat("initialBudget", 0.0f);
+        showCategoryProgress(totalBudget); // 🔸 προσωρινός τρόπος εμφάνισης μέχρι να μπει SQL
     }
 
     private void refreshBudget() {
@@ -131,5 +171,60 @@ public class HomeActivity extends AppCompatActivity {
         spannable.setSpan(new StyleSpan(Typeface.BOLD), start, end, 0);
         spannable.setSpan(new RelativeSizeSpan(1.6f), start, end, 0);
         daysInfoText.setText(spannable);
+    }
+
+    private void showCategoryProgress(double totalBudget) {
+        LinearLayout container = findViewById(R.id.categoryProgressContainer);
+        container.removeAllViews();
+
+        Map<String, Double> expenses = getExpensesGroupedByCategory();
+
+        String[][] categories = {
+                {"Καφές", "☕", "#6D4C41"},
+                {"Φαγητό", "🍕", "#EF6C00"},
+                {"Μετακίνηση", "🚗", "#039BE5"},
+                {"Διασκέδαση", "🎉", "#8E24AA"},
+                {"Άλλο", "📦", "#607D8B"}
+        };
+
+        for (String[] cat : categories) {
+            String category = cat[0];
+            String emoji = cat[1];
+            String colorHex = cat[2];
+
+            double amount = expenses.containsKey(category) ? expenses.get(category) : 0.0;
+            double percent = (totalBudget == 0.0) ? 0.0 : (amount / totalBudget) * 100.0;
+
+            TextView label = new TextView(this);
+            label.setText(emoji + " " + category + ": " + String.format(Locale.getDefault(), "%.1f", percent) + "%");
+            label.setTextSize(16);
+            label.setPadding(0, 12, 0, 0);
+
+            ProgressBar bar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
+            bar.setMax(100);
+            bar.setProgress((int) percent);
+            bar.setLayoutParams(new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            bar.getProgressDrawable().setColorFilter(android.graphics.Color.parseColor(colorHex),
+                    android.graphics.PorterDuff.Mode.SRC_IN);
+
+            container.addView(label);
+            container.addView(bar);
+        }
+    }
+
+    private Map<String, Double> getExpensesGroupedByCategory() {
+        SharedPreferences prefs = getSharedPreferences("BrokeNoMorePrefs", MODE_PRIVATE);
+        Map<String, Double> map = new HashMap<>();
+
+        String[] categories = {"Καφές", "Φαγητό", "Μετακίνηση", "Διασκέδαση", "Άλλο"};
+        for (String category : categories) {
+            float amount = prefs.getFloat("spent_" + category, 0f);
+            map.put(category, (double) amount);
+        }
+
+        return map;
     }
 }
