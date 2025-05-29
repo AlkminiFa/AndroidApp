@@ -1,10 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFDE7"
     tools:context=".HomeActivity">
+
+    <!-- Τίτλος (κεντραρισμένος) -->
+    <TextView
+        android:id="@+id/appTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="💸 StuBudget 💸"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        android:textColor="#4E342E"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="48dp"/>
+
+    <!-- Ποσό (στοιχισμένο αριστερά) -->
+    <TextView
+        android:id="@+id/budgetAmount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="400,00 €"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:textColor="#2E7D32"
+        app:layout_constraintTop_toBottomOf="@id/appTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="24dp"/>
+
+    <!-- Απομένουν 30 ημέρες (με μορφοποίηση από Java) -->
+    <TextView
+        android:id="@+id/daysInfoText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Απομένουν 30 ημέρες"
+        android:textSize="18sp"
+        android:textColor="#5D4037"
+        app:layout_constraintTop_toBottomOf="@id/budgetAmount"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="24dp"/>
+
+    <!-- Κουμπιά αριστερά -->
+    <Button
+        android:id="@+id/changeBudgetBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="✏️ Αλλαγή Budget"
+        android:backgroundTint="#9575CD"
+        android:textColor="#FFFFFF"
+        app:layout_constraintTop_toBottomOf="@id/daysInfoText"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="24dp"/>
+
+    <Button
+        android:id="@+id/addExpenseBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="🍕 Καταγραφή Εξόδου"
+        android:backgroundTint="#9575CD"
+        android:textColor="#FFFFFF"
+        app:layout_constraintTop_toBottomOf="@id/changeBudgetBtn"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="24dp"/>
+
+    <Button
+        android:id="@+id/nextDayBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="⏭️ Προώθηση Ημέρας"
+        android:backgroundTint="#9575CD"
+        android:textColor="#FFFFFF"
+        app:layout_constraintTop_toBottomOf="@id/addExpenseBtn"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="24dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

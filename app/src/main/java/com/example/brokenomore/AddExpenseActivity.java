@@ -22,11 +22,13 @@ public class AddExpenseActivity extends AppCompatActivity {
         EditText etAmount = findViewById(R.id.etAmount);
         Button btnSave = findViewById(R.id.btnSaveExpense);
 
+        // Γέμισμα Spinner με τις κατηγορίες
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.expense_categories, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCategory.setAdapter(adapter);
 
+        // Πάτημα στο "Καταχώρηση"
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,6 +53,7 @@ public class AddExpenseActivity extends AppCompatActivity {
                     return;
                 }
 
+                // Χρήση ίδιου SharedPreferences ονόματος με HomeActivity
                 SharedPreferences prefs = getSharedPreferences("BrokeNoMorePrefs", MODE_PRIVATE);
                 float currentBudget = prefs.getFloat("budget", 0f);
 
@@ -66,7 +69,7 @@ public class AddExpenseActivity extends AppCompatActivity {
                         "Καταχωρήθηκε: " + amount + "€ για " + selectedCategory + "\nΥπόλοιπο: " + updatedBudget + "€",
                         Toast.LENGTH_LONG).show();
 
-                finish(); // Επιστροφή στην MainActivity
+                finish(); // Επιστροφή στην HomeActivity
             }
         });
     }

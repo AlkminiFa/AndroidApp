@@ -52,9 +52,10 @@ public class LoginActivity extends AppCompatActivity {
                 SharedPreferences prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
                 prefs.edit().putBoolean("isLoggedIn", true).apply();
 
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                 startActivity(intent);
-                finish();
+                finish(); // για να μην επιστρέφει στο login με back
+
             } else {
                 Toast.makeText(LoginActivity.this, "Λάθος στοιχεία", Toast.LENGTH_SHORT).show();
             }
