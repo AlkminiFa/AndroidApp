@@ -8,6 +8,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,6 +20,8 @@ public class MainActivity extends AppCompatActivity {
     TextView tvBudget, budgetDisplay;
     EditText budgetInput;
     Button btnSaveBudget, btnChangeBudget;
+
+    TransactionDatabaseHelper transactionDb = new TransactionDatabaseHelper(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
         Button btnAddExpense = findViewById(R.id.btnAddExpense);
         Button btnChallenges = findViewById(R.id.btnChallenges);
 
+
+
         btnAddExpense.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, AddExpenseActivity.class);
             startActivity(intent);
@@ -38,6 +45,10 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, ChallengesActivity.class);
             startActivity(intent);
         });
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String today = sdf.format(Calendar.getInstance().getTime());
+        transactionDb.deleteOldTransactions();
 
         // Εμφάνιση υπολοίπου
         tvBudget = findViewById(R.id.tvBudget);

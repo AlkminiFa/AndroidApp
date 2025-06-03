@@ -1,7 +1,7 @@
+
 package com.example.brokenomore;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
@@ -12,12 +12,7 @@ import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,15 +21,13 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 public class HomeActivity extends AppCompatActivity {
 
     private TextView budgetAmount;
     private TextView daysInfoText;
+    private int userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,14 +35,12 @@ public class HomeActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home);
 
-        // Edge-to-edge padding
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        // Συνδέσεις UI
         budgetAmount = findViewById(R.id.budgetAmount);
         daysInfoText = findViewById(R.id.daysInfoText);
         Button changeBudgetBtn = findViewById(R.id.changeBudgetBtn);
@@ -57,7 +48,9 @@ public class HomeActivity extends AppCompatActivity {
         Button nextDayBtn = findViewById(R.id.nextDayBtn);
         nextDayBtn.setText("📅 Πρόκληση Ημέρας");
 
-        // Κουμπί αλλαγής budget & ημερών
+        SharedPreferences loginPrefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        userId = loginPrefs.getInt("userId", -1);
+
         changeBudgetBtn.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Καταχώρηση Budget και Ημερών");
@@ -90,21 +83,19 @@ public class HomeActivity extends AppCompatActivity {
 
                     SharedPreferences prefs = getSharedPreferences("BrokeNoMorePrefs", MODE_PRIVATE);
                     SharedPreferences.Editor editor = prefs.edit();
-                    editor.putFloat("budget", newBudget);
-                    editor.putFloat("initialBudget", newBudget);
-                    editor.putInt("daysLeft", newDays);
-                    editor.putString("lastOpenedDate", today);
 
-                    // ✅ Μηδενισμός εξόδων ανά κατηγορία όταν ξεκινά νέο budget
+                    editor.putFloat("budget_user_" + userId, newBudget);
+                    editor.putFloat("initialBudget_user_" + userId, newBudget);
+                    editor.putInt("daysLeft_user_" + userId, newDays);
+                    editor.putString("lastOpenedDate_user_" + userId, today);
+
                     String[] categories = {"Καφές", "Φαγητό", "Μετακίνηση", "Διασκέδαση", "Άλλο"};
                     for (String category : categories) {
-                        editor.putFloat("spent_" + category, 0f);
+                        editor.putFloat("spent_" + category + "_user_" + userId, 0f);
                     }
 
                     editor.apply();
                     budgetAmount.setText(String.format(Locale.getDefault(), "%.2f €", newBudget));
-
-                    // ✅ Εμφάνιση των 0% μπάρων αμέσως μετά την αλλαγή budget
                     showCategoryProgress(newBudget);
                     updateDaysText(newDays);
                 }
@@ -114,7 +105,6 @@ public class HomeActivity extends AppCompatActivity {
             builder.show();
         });
 
-        // Κουμπί καταχώρησης εξόδου
         addExpenseBtn.setOnClickListener(v -> {
             Intent intent = new Intent(HomeActivity.this, AddExpenseActivity.class);
             startActivity(intent);
@@ -124,12 +114,10 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        refreshBudget();
-
         SharedPreferences prefs = getSharedPreferences("BrokeNoMorePrefs", MODE_PRIVATE);
-        int daysLeft = prefs.getInt("daysLeft", 30);
-        String lastOpened = prefs.getString("lastOpenedDate", "");
 
+        int daysLeft = prefs.getInt("daysLeft_user_" + userId, 0);
+        String lastOpened = prefs.getString("lastOpenedDate_user_" + userId, "");
         String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
         if (!lastOpened.equals(today)) {
@@ -141,24 +129,24 @@ public class HomeActivity extends AppCompatActivity {
 
                 if (daysPassed > 0 && daysLeft > 0) {
                     daysLeft = Math.max(0, daysLeft - daysPassed);
-                    prefs.edit().putInt("daysLeft", daysLeft).apply();
+                    prefs.edit().putInt("daysLeft_user_" + userId, daysLeft).apply();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            prefs.edit().putString("lastOpenedDate", today).apply();
+            prefs.edit().putString("lastOpenedDate_user_" + userId, today).apply();
         }
 
         updateDaysText(daysLeft);
-
-        float totalBudget = prefs.getFloat("initialBudget", 0.0f);
-        showCategoryProgress(totalBudget); // 🔸 προσωρινός τρόπος εμφάνισης μέχρι να μπει SQL
+        float totalBudget = prefs.getFloat("initialBudget_user_" + userId, 0.0f);
+        showCategoryProgress(totalBudget);
+        refreshBudget();
     }
 
     private void refreshBudget() {
         SharedPreferences prefs = getSharedPreferences("BrokeNoMorePrefs", MODE_PRIVATE);
-        float currentBudget = prefs.getFloat("budget", 0.0f);
+        float currentBudget = prefs.getFloat("budget_user_" + userId, 0.0f);
         budgetAmount.setText(String.format(Locale.getDefault(), "%.2f €", currentBudget));
     }
 
@@ -206,7 +194,6 @@ public class HomeActivity extends AppCompatActivity {
             bar.setLayoutParams(new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT));
-
             bar.getProgressDrawable().setColorFilter(android.graphics.Color.parseColor(colorHex),
                     android.graphics.PorterDuff.Mode.SRC_IN);
 
@@ -221,7 +208,7 @@ public class HomeActivity extends AppCompatActivity {
 
         String[] categories = {"Καφές", "Φαγητό", "Μετακίνηση", "Διασκέδαση", "Άλλο"};
         for (String category : categories) {
-            float amount = prefs.getFloat("spent_" + category, 0f);
+            float amount = prefs.getFloat("spent_" + category + "_user_" + userId, 0f);
             map.put(category, (double) amount);
         }
 

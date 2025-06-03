@@ -1,3 +1,4 @@
+
 package com.example.brokenomore;
 
 import android.content.SharedPreferences;
@@ -11,6 +12,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class AddExpenseActivity extends AppCompatActivity {
 
     @Override
@@ -22,13 +27,11 @@ public class AddExpenseActivity extends AppCompatActivity {
         EditText etAmount = findViewById(R.id.etAmount);
         Button btnSave = findViewById(R.id.btnSaveExpense);
 
-        // Γέμισμα Spinner με τις κατηγορίες
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.expense_categories, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCategory.setAdapter(adapter);
 
-        // Πάτημα στο "Καταχώρηση"
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,9 +56,18 @@ public class AddExpenseActivity extends AppCompatActivity {
                     return;
                 }
 
-                // Χρήση ίδιου SharedPreferences ονόματος με HomeActivity
+                // Λήψη userId πρώτα
+                SharedPreferences loginPrefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+                int userId = loginPrefs.getInt("userId", -1);
+
+                if (userId == -1) {
+                    Toast.makeText(AddExpenseActivity.this, "Πρόβλημα με την ταυτοποίηση χρήστη (userId = -1)", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 SharedPreferences prefs = getSharedPreferences("BrokeNoMorePrefs", MODE_PRIVATE);
-                float currentBudget = prefs.getFloat("budget", 0f);
+                String budgetKey = "budget_user_" + userId;
+                float currentBudget = prefs.getFloat(budgetKey, 0f);
 
                 if (amount > currentBudget) {
                     Toast.makeText(AddExpenseActivity.this, "Το ποσό ξεπερνά το διαθέσιμο budget!", Toast.LENGTH_SHORT).show();
@@ -63,19 +75,36 @@ public class AddExpenseActivity extends AppCompatActivity {
                 }
 
                 float updatedBudget = currentBudget - amount;
-                prefs.edit().putFloat("budget", updatedBudget).apply();
+                prefs.edit().putFloat(budgetKey, updatedBudget).apply();
 
-                Toast.makeText(AddExpenseActivity.this,
-                        "Καταχωρήθηκε: " + amount + "€ για " + selectedCategory + "\nΥπόλοιπο: " + updatedBudget + "€",
-                        Toast.LENGTH_LONG).show();
+                TransactionDatabaseHelper transactionDb = new TransactionDatabaseHelper(AddExpenseActivity.this);
+                String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
-                // Αποθήκευση ποσού στην αντίστοιχη κατηγορία (προσωρινό, μέχρι να γίνει βάση SQL)
-                String key = "spent_" + selectedCategory;
-                float previous = prefs.getFloat(key, 0f);
-                prefs.edit().putFloat(key, previous + amount).apply();
+                boolean success = transactionDb.insertTransaction(
+                        userId,
+                        amount,
+                        "expense",
+                        selectedCategory,
+                        "",
+                        currentDate
+                );
 
+                if (success) {
+                    Toast.makeText(AddExpenseActivity.this,
+                            "✅ Καταχωρήθηκε στη ΒΑΣΗ για userId=" + userId + ": " + amount + "€ για " + selectedCategory,
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(AddExpenseActivity.this,
+                            "❌ Αποτυχία καταχώρησης στη ΒΑΣΗ για userId=" + userId,
+                            Toast.LENGTH_LONG).show();
+                }
 
-                finish(); // Επιστροφή στην HomeActivity
+                // Καταγραφή εξόδου ανά κατηγορία και ανά χρήστη (για progress bars)
+                String categoryKey = "spent_" + selectedCategory + "_user_" + userId;
+                float previous = prefs.getFloat(categoryKey, 0f);
+                prefs.edit().putFloat(categoryKey, previous + amount).apply();
+
+                finish();
             }
         });
     }
