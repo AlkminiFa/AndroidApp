@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -14,91 +13,107 @@
         android:id="@+id/appTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
         android:text="💸 StuBudget 💸"
+        android:textColor="#4E342E"
         android:textSize="26sp"
         android:textStyle="bold"
-        android:textColor="#4E342E"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="48dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Avatar -->
+    <ImageView
+        android:id="@+id/avatarImage"
+        android:layout_width="197dp"
+        android:layout_height="259dp"
+        android:layout_marginTop="32dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/avatar_desc"
+        android:scaleType="fitCenter"
+        android:src="@drawable/normal"
+        app:layout_constraintBottom_toBottomOf="@id/addExpenseBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.775"
+        app:layout_constraintStart_toEndOf="@id/budgetAmount"
+        app:layout_constraintTop_toTopOf="@id/budgetAmount"
+        app:layout_constraintVertical_bias="0.551" />
 
     <!-- Ποσό (στοιχισμένο αριστερά) -->
     <TextView
         android:id="@+id/budgetAmount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="32dp"
         android:text="400,00 €"
+        android:textColor="#2E7D32"
         android:textSize="36sp"
         android:textStyle="bold"
-        android:textColor="#2E7D32"
-        app:layout_constraintTop_toBottomOf="@id/appTitle"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="32dp"
-        android:layout_marginStart="24dp"/>
+        app:layout_constraintTop_toBottomOf="@id/appTitle" />
 
     <!-- Απομένουν 30 ημέρες (με μορφοποίηση από Java) -->
     <TextView
         android:id="@+id/daysInfoText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Απομένουν 30 ημέρες"
-        android:textSize="18sp"
-        android:textColor="#5D4037"
-        app:layout_constraintTop_toBottomOf="@id/budgetAmount"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
-        android:layout_marginStart="24dp"/>
+        android:text="Απομένουν 30 ημέρες"
+        android:textColor="#5D4037"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/budgetAmount" />
 
     <!-- Κουμπιά αριστερά -->
     <Button
         android:id="@+id/changeBudgetBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="✏️ Αλλαγή Budget"
-        android:backgroundTint="#9575CD"
-        android:textColor="#FFFFFF"
-        app:layout_constraintTop_toBottomOf="@id/daysInfoText"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="32dp"
-        android:layout_marginStart="24dp"/>
+        android:backgroundTint="#9575CD"
+        android:text="✏️ Αλλαγή Budget"
+        android:textColor="#FFFFFF"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/daysInfoText" />
 
     <Button
         android:id="@+id/addExpenseBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="🍕 Καταγραφή Εξόδου"
-        android:backgroundTint="#9575CD"
-        android:textColor="#FFFFFF"
-        app:layout_constraintTop_toBottomOf="@id/changeBudgetBtn"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
-        android:layout_marginStart="24dp"/>
+        android:backgroundTint="#9575CD"
+        android:text="🍕 Καταγραφή Εξόδου"
+        android:textColor="#FFFFFF"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/changeBudgetBtn" />
 
     <Button
         android:id="@+id/nextDayBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="⏭️ Προώθηση Ημέρας"
-        android:backgroundTint="#9575CD"
-        android:textColor="#FFFFFF"
-        app:layout_constraintTop_toBottomOf="@id/addExpenseBtn"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
-        android:layout_marginStart="24dp"/>
+        android:backgroundTint="#9575CD"
+        android:text="⏭️ Προώθηση Ημέρας"
+        android:textColor="#FFFFFF"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/addExpenseBtn" />
 
     <LinearLayout
         android:id="@+id/categoryProgressContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:orientation="vertical"
         android:padding="16dp"
-        app:layout_constraintTop_toBottomOf="@id/nextDayBtn"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="32dp"/>
-
-
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nextDayBtn" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

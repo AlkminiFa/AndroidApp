@@ -22,6 +22,7 @@ public class UserDatabaseHelper extends SQLiteOpenHelper {
                 "password TEXT)");
     }
 
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Αν χρειαστεί στο μέλλον

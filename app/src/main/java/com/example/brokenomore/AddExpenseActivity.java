@@ -67,15 +67,19 @@ public class AddExpenseActivity extends AppCompatActivity {
 
                 SharedPreferences prefs = getSharedPreferences("BrokeNoMorePrefs", MODE_PRIVATE);
                 String budgetKey = "budget_user_" + userId;
-                float currentBudget = prefs.getFloat(budgetKey, 0f);
-
+                TransactionDatabaseHelper dbHelper = new TransactionDatabaseHelper(AddExpenseActivity.this);
+                float currentBudget = dbHelper.getBudget(userId);
                 if (amount > currentBudget) {
                     Toast.makeText(AddExpenseActivity.this, "Το ποσό ξεπερνά το διαθέσιμο budget!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
+
                 float updatedBudget = currentBudget - amount;
-                prefs.edit().putFloat(budgetKey, updatedBudget).apply();
+                float initialBudget = dbHelper.getInitialBudget(userId);
+                String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+                dbHelper.saveOrUpdateUserBudget(userId, updatedBudget, initialBudget, dbHelper.getDaysLeft(userId), today);
+
 
                 TransactionDatabaseHelper transactionDb = new TransactionDatabaseHelper(AddExpenseActivity.this);
                 String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());

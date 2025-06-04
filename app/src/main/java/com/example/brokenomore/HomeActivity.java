@@ -81,20 +81,12 @@ public class HomeActivity extends AppCompatActivity {
 
                     String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
-                    SharedPreferences prefs = getSharedPreferences("BrokeNoMorePrefs", MODE_PRIVATE);
-                    SharedPreferences.Editor editor = prefs.edit();
+                    TransactionDatabaseHelper dbHelper = new TransactionDatabaseHelper(HomeActivity.this);
+                    today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+                    dbHelper.saveOrUpdateUserBudget(userId, newBudget, newBudget, newDays, today);
+                    dbHelper.deleteAllExpensesForUser(userId);//μηδενίζονται οι μπάρες
 
-                    editor.putFloat("budget_user_" + userId, newBudget);
-                    editor.putFloat("initialBudget_user_" + userId, newBudget);
-                    editor.putInt("daysLeft_user_" + userId, newDays);
-                    editor.putString("lastOpenedDate_user_" + userId, today);
 
-                    String[] categories = {"Καφές", "Φαγητό", "Μετακίνηση", "Διασκέδαση", "Άλλο"};
-                    for (String category : categories) {
-                        editor.putFloat("spent_" + category + "_user_" + userId, 0f);
-                    }
-
-                    editor.apply();
                     budgetAmount.setText(String.format(Locale.getDefault(), "%.2f €", newBudget));
                     showCategoryProgress(newBudget);
                     updateDaysText(newDays);
@@ -114,10 +106,11 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        SharedPreferences prefs = getSharedPreferences("BrokeNoMorePrefs", MODE_PRIVATE);
+        TransactionDatabaseHelper dbHelper = new TransactionDatabaseHelper(HomeActivity.this);
+        int daysLeft = dbHelper.getDaysLeft(userId);
 
-        int daysLeft = prefs.getInt("daysLeft_user_" + userId, 0);
-        String lastOpened = prefs.getString("lastOpenedDate_user_" + userId, "");
+
+        String lastOpened = dbHelper.getLastOpenedDate(userId);
         String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
         if (!lastOpened.equals(today)) {
@@ -129,24 +122,34 @@ public class HomeActivity extends AppCompatActivity {
 
                 if (daysPassed > 0 && daysLeft > 0) {
                     daysLeft = Math.max(0, daysLeft - daysPassed);
-                    prefs.edit().putInt("daysLeft_user_" + userId, daysLeft).apply();
+                    lastOpened = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+                    float budget = dbHelper.getBudget(userId);
+                    float initialBudget = dbHelper.getInitialBudget(userId);
+
+// Ενημερώνουμε την εγγραφή με νέο daysLeft και lastOpenedDate
+                    dbHelper.saveOrUpdateUserBudget(userId, budget, initialBudget, daysLeft, lastOpened);
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            prefs.edit().putString("lastOpenedDate_user_" + userId, today).apply();
+            float budget = dbHelper.getBudget(userId);
+            float initialBudget = dbHelper.getInitialBudget(userId);
+            dbHelper.saveOrUpdateUserBudget(userId, budget, initialBudget, daysLeft, today);
+
         }
 
         updateDaysText(daysLeft);
-        float totalBudget = prefs.getFloat("initialBudget_user_" + userId, 0.0f);
+        float totalBudget = dbHelper.getInitialBudget(userId);
+
         showCategoryProgress(totalBudget);
         refreshBudget();
     }
 
     private void refreshBudget() {
-        SharedPreferences prefs = getSharedPreferences("BrokeNoMorePrefs", MODE_PRIVATE);
-        float currentBudget = prefs.getFloat("budget_user_" + userId, 0.0f);
+        TransactionDatabaseHelper dbHelper = new TransactionDatabaseHelper(HomeActivity.this);
+        float currentBudget = dbHelper.getBudget(userId);
         budgetAmount.setText(String.format(Locale.getDefault(), "%.2f €", currentBudget));
     }
 
@@ -203,15 +206,16 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private Map<String, Double> getExpensesGroupedByCategory() {
-        SharedPreferences prefs = getSharedPreferences("BrokeNoMorePrefs", MODE_PRIVATE);
         Map<String, Double> map = new HashMap<>();
+        TransactionDatabaseHelper dbHelper = new TransactionDatabaseHelper(this);
 
         String[] categories = {"Καφές", "Φαγητό", "Μετακίνηση", "Διασκέδαση", "Άλλο"};
         for (String category : categories) {
-            float amount = prefs.getFloat("spent_" + category + "_user_" + userId, 0f);
-            map.put(category, (double) amount);
+            double total = dbHelper.getTotalSpentByCategory(userId, category);
+            map.put(category, total);
         }
 
         return map;
     }
+
 }
