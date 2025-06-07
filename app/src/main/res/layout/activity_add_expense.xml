@@ -5,12 +5,37 @@
     android:orientation="vertical"
     android:padding="24dp"
     android:gravity="center"
-    android:background="#FFF8E7">
+    android:background="#D0F0C0">
+
+    <!-- Avatar -->
+    <TextView
+        android:id="@+id/avatarComment"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="8dp"
+        android:textColor="@android:color/black"
+        android:textSize="23sp"
+        android:fontFamily="sans-serif-light"
+        android:textStyle="italic"
+        android:textAlignment="center" />
+
+
+    <ImageView
+        android:id="@+id/avatarImage"
+        android:layout_width="351dp"
+        android:layout_height="277dp"
+        android:layout_marginTop="32dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/avatar_desc"
+        android:scaleType="fitCenter"
+        android:src="@drawable/normal" />
 
     <TextView
         android:text="Καταχώρηση Εξόδου"
-        android:textSize="20sp"
-        android:textStyle="bold"
+        android:textSize="23sp"
+        android:fontFamily="sans-serif-medium"
+        android:textStyle="italic"
         android:layout_marginBottom="24dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -34,7 +59,8 @@
         android:id="@+id/btnSaveExpense"
         android:text="Καταχώρησε"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:backgroundTint="#004225"/>
 
 </LinearLayout>
 

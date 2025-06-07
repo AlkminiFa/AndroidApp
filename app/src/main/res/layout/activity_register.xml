@@ -5,16 +5,17 @@ android:orientation="vertical"
 android:gravity="center"
 android:padding="24dp"
 android:layout_width="match_parent"
-android:layout_height="match_parent">
+android:layout_height="match_parent"
+android:background="#D0F0C0">
 
-<EditText
-    android:id="@+id/emailInput"
-    android:hint="Email"
-    android:inputType="textEmailAddress"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content" />
+    <EditText
+        android:id="@+id/emailInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Email"
+        android:inputType="textEmailAddress" />
 
-<EditText
+    <EditText
     android:id="@+id/passwordInput"
     android:hint="Κωδικός"
     android:inputType="textPassword"
@@ -27,5 +28,6 @@ android:layout_height="match_parent">
     android:text="Εγγραφή"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginTop="24dp" />
+    android:layout_marginTop="24dp"
+    android:backgroundTint="#004225"/>
 </LinearLayout>

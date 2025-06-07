@@ -13,7 +13,7 @@ import java.util.Locale;
 public class TransactionDatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "transactions.db";
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
 
     public TransactionDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -49,6 +49,11 @@ public class TransactionDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS Transactions");
         db.execSQL("DROP TABLE IF EXISTS UserBudgetData");
         onCreate(db);
+
+        db.execSQL("CREATE TABLE IF NOT EXISTS UserDailyChallenge (" +
+                "user_id INTEGER, date TEXT, challenge TEXT, " +
+                "PRIMARY KEY(user_id, date))");
+
     }
 
     // Εισαγωγή συναλλαγής
@@ -164,6 +169,31 @@ public class TransactionDatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("Transactions", "user_id = ? AND type = 'expense'", new String[]{String.valueOf(userId)});
     }
+
+    public void saveChallengeForDate(int userId, String date, String challenge) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("user_id", userId);
+        values.put("date", date);
+        values.put("challenge", challenge);
+        db.insertWithOnConflict("UserDailyChallenge", null, values, SQLiteDatabase.CONFLICT_REPLACE);
+    }
+
+
+    public String getChallengeForDate(int userId, String date) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT challenge FROM UserDailyChallenge WHERE user_id = ? AND date = ?", new String[]{String.valueOf(userId), date});
+        if (cursor.moveToFirst()) {
+            String challenge = cursor.getString(0);
+            cursor.close();
+            return challenge;
+        }
+        cursor.close();
+        return null;
+    }
+
+
+
 
 }
 

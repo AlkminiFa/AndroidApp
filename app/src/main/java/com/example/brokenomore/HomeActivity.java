@@ -46,7 +46,15 @@ public class HomeActivity extends AppCompatActivity {
         Button changeBudgetBtn = findViewById(R.id.changeBudgetBtn);
         Button addExpenseBtn = findViewById(R.id.addExpenseBtn);
         Button nextDayBtn = findViewById(R.id.nextDayBtn);
-        nextDayBtn.setText("📅 Πρόκληση Ημέρας");
+        nextDayBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, ChallengesActivity.class);
+            intent.putExtra("userId", userId);
+            startActivity(intent);
+        });
+
+
+
+
 
         SharedPreferences loginPrefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
         userId = loginPrefs.getInt("userId", -1);
@@ -54,6 +62,7 @@ public class HomeActivity extends AppCompatActivity {
         changeBudgetBtn.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Καταχώρηση Budget και Ημερών");
+
 
             LinearLayout layout = new LinearLayout(this);
             layout.setOrientation(LinearLayout.VERTICAL);
@@ -90,16 +99,22 @@ public class HomeActivity extends AppCompatActivity {
                     budgetAmount.setText(String.format(Locale.getDefault(), "%.2f €", newBudget));
                     showCategoryProgress(newBudget);
                     updateDaysText(newDays);
+                    updateAvatar();//avatar
+
                 }
             });
 
             builder.setNegativeButton("Άκυρο", (dialog, which) -> dialog.cancel());
             builder.show();
+
+
         });
+
 
         addExpenseBtn.setOnClickListener(v -> {
             Intent intent = new Intent(HomeActivity.this, AddExpenseActivity.class);
             startActivity(intent);
+            updateAvatar();
         });
     }
 
@@ -140,17 +155,21 @@ public class HomeActivity extends AppCompatActivity {
 
         }
 
-        updateDaysText(daysLeft);
-        float totalBudget = dbHelper.getInitialBudget(userId);
 
+        updateDaysText(daysLeft);
+        updateAvatar(); //avatar
+        float totalBudget = dbHelper.getInitialBudget(userId);
         showCategoryProgress(totalBudget);
         refreshBudget();
+
+
     }
 
     private void refreshBudget() {
         TransactionDatabaseHelper dbHelper = new TransactionDatabaseHelper(HomeActivity.this);
         float currentBudget = dbHelper.getBudget(userId);
         budgetAmount.setText(String.format(Locale.getDefault(), "%.2f €", currentBudget));
+
     }
 
     private void updateDaysText(int days) {
@@ -172,7 +191,7 @@ public class HomeActivity extends AppCompatActivity {
 
         String[][] categories = {
                 {"Καφές", "☕", "#6D4C41"},
-                {"Φαγητό", "🍕", "#EF6C00"},
+                {"Φαγητό", "\uD83C\uDF54", "#EF6C00"},
                 {"Μετακίνηση", "🚗", "#039BE5"},
                 {"Διασκέδαση", "🎉", "#8E24AA"},
                 {"Άλλο", "📦", "#607D8B"}
@@ -217,5 +236,39 @@ public class HomeActivity extends AppCompatActivity {
 
         return map;
     }
+
+    //avatar
+    private void updateAvatar() {
+        ImageView avatar = findViewById(R.id.avatarImage);
+
+        TransactionDatabaseHelper dbHelper = new TransactionDatabaseHelper(this);
+        float budget = dbHelper.getBudget(userId);
+        int daysLeft = dbHelper.getDaysLeft(userId);
+
+        // αποφυγή διαιρέσεων με 0
+        if (daysLeft <= 0) {
+            avatar.setImageResource(R.drawable.dead);
+            return;
+        }
+
+        double moneyPerDay = budget / daysLeft;
+
+        if (moneyPerDay >= 15) {
+            avatar.setImageResource(R.drawable.happy);
+        } else if (moneyPerDay >= 10) {
+            avatar.setImageResource(R.drawable.normal);
+        } else if (moneyPerDay >= 5) {
+            avatar.setImageResource(R.drawable.sceptic);
+        } else if (moneyPerDay >= 3) {
+            avatar.setImageResource(R.drawable.angry);
+        } else if (moneyPerDay > 0){
+            avatar.setImageResource(R.drawable.sad);
+        }
+        else {
+            avatar.setImageResource(R.drawable.dead);
+
+        }
+    }
+
 
 }

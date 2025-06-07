@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFDE7"
+    android:background="#D0F0C0"
     tools:context=".HomeActivity">
 
     <!-- Τίτλος (κεντραρισμένος) -->
@@ -14,8 +14,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
-        android:text="💸 StuBudget 💸"
-        android:textColor="#4E342E"
+        android:text="StuBudget"
+        android:textColor="#004225"
         android:textSize="26sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -46,8 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="32dp"
-        android:text="400,00 €"
-        android:textColor="#2E7D32"
+        android:textColor="#004225"
         android:textSize="36sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -60,8 +59,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
-        android:text="Απομένουν 30 ημέρες"
-        android:textColor="#5D4037"
+        android:textColor="#000000"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/budgetAmount" />
@@ -73,8 +71,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="32dp"
-        android:backgroundTint="#9575CD"
-        android:text="✏️ Αλλαγή Budget"
+        android:backgroundTint="#004225"
+        android:text="Αλλαγή Budget"
         android:textColor="#FFFFFF"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/daysInfoText" />
@@ -85,8 +83,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
-        android:backgroundTint="#9575CD"
-        android:text="🍕 Καταγραφή Εξόδου"
+        android:backgroundTint="#004225"
+        android:text="Καταγραφή Εξόδου"
         android:textColor="#FFFFFF"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/changeBudgetBtn" />
@@ -97,11 +95,12 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
-        android:backgroundTint="#9575CD"
-        android:text="⏭️ Προώθηση Ημέρας"
+        android:backgroundTint="#004225"
+        android:text="Πρόκληση ημέρας"
         android:textColor="#FFFFFF"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/addExpenseBtn" />
+
 
     <LinearLayout
         android:id="@+id/categoryProgressContainer"
