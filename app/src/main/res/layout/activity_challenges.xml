@@ -6,6 +6,16 @@
     android:background="#D0F0C0">
 
     <ImageView
+        android:id="@+id/avatarImage"
+        android:layout_width="351dp"
+        android:layout_height="277dp"
+        android:layout_marginTop="32dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/avatar_desc"
+        android:scaleType="fitCenter"
+        android:src="@drawable/wheel_pig" />
+
+    <ImageView
         android:id="@+id/wheelImage"
         android:layout_width="300dp"
         android:layout_height="300dp"

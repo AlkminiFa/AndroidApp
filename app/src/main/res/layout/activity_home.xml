@@ -8,25 +8,15 @@
     android:background="#D0F0C0"
     tools:context=".HomeActivity">
 
-    <!-- Τίτλος (κεντραρισμένος) -->
-    <TextView
-        android:id="@+id/appTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:text="StuBudget"
-        android:textColor="#004225"
-        android:textSize="26sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+
 
     <!-- Avatar -->
+
+    <!-- Ποσό (στοιχισμένο αριστερά) -->
     <ImageView
         android:id="@+id/avatarImage"
-        android:layout_width="197dp"
-        android:layout_height="259dp"
+        android:layout_width="217dp"
+        android:layout_height="265dp"
         android:layout_marginTop="32dp"
         android:adjustViewBounds="true"
         android:contentDescription="@string/avatar_desc"
@@ -34,12 +24,11 @@
         android:src="@drawable/normal"
         app:layout_constraintBottom_toBottomOf="@id/addExpenseBtn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.775"
+        app:layout_constraintHorizontal_bias="0.976"
         app:layout_constraintStart_toEndOf="@id/budgetAmount"
         app:layout_constraintTop_toTopOf="@id/budgetAmount"
-        app:layout_constraintVertical_bias="0.551" />
+        app:layout_constraintVertical_bias="0.492" />
 
-    <!-- Ποσό (στοιχισμένο αριστερά) -->
     <TextView
         android:id="@+id/budgetAmount"
         android:layout_width="wrap_content"
@@ -50,7 +39,7 @@
         android:textSize="36sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/appTitle" />
+        app:layout_constraintTop_toBottomOf="@id/myToolbar" />
 
     <!-- Απομένουν 30 ημέρες (με μορφοποίηση από Java) -->
     <TextView
@@ -102,17 +91,39 @@
         app:layout_constraintTop_toBottomOf="@id/addExpenseBtn" />
 
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/myToolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:elevation="4dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:backgroundTint="#D0F0C0">
+
+        <TextView
+            android:id="@+id/toolbarTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="StuBudget"
+            android:gravity="center"
+            android:textColor="#004225"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:padding="12dp" />
+    </androidx.appcompat.widget.Toolbar>
+
     <LinearLayout
         android:id="@+id/categoryProgressContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:orientation="vertical"
         android:padding="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintTop_toBottomOf="@id/nextDayBtn"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/nextDayBtn" />
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

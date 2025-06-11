@@ -98,14 +98,14 @@ public class AddExpenseActivity extends AppCompatActivity {
 
                 if (success) {
                     Toast.makeText(AddExpenseActivity.this,
-                            "✅ Καταχωρήθηκε στη ΒΑΣΗ για userId=" + userId + ": " + amount + "€ για " + selectedCategory,
+                            "Καταχωρήθηκε  " ,
                             Toast.LENGTH_LONG).show();
 
-                    // 🎯 Ενημέρωσε το avatar μετά την επιτυχή καταχώρηση
+                    //Ενημέρωση avatar
                     updateAvatar();
                 } else {
                     Toast.makeText(AddExpenseActivity.this,
-                            "❌ Αποτυχία καταχώρησης στη ΒΑΣΗ για userId=" + userId,
+                            "Αποτυχία καταχώρησης " ,
                             Toast.LENGTH_LONG).show();
                 }
 
@@ -126,20 +126,25 @@ public class AddExpenseActivity extends AppCompatActivity {
     //avatar
     private void updateAvatar() {
         ImageView avatar = findViewById(R.id.avatarImage);
-        TextView comment = findViewById(R.id.avatarComment);  // 👈 νέο TextView
+        TextView comment = findViewById(R.id.avatarComment);
 
         TransactionDatabaseHelper dbHelper = new TransactionDatabaseHelper(this);
         float budget = dbHelper.getBudget(userId);
         int daysLeft = dbHelper.getDaysLeft(userId);
 
-        if (daysLeft <= 0) {
-            avatar.setImageResource(R.drawable.angry);
-            comment.setText("Μηδέν ημέρες; Πεινάμε! 🐷");
+        if (daysLeft == 0 && budget==0) {
+            avatar.setImageResource(R.drawable.dead);
+            comment.setText("Ούτε μέρες, ούτε λεφτά, πάμε για restart!");
+            return;
+        }
+
+        if (daysLeft <= 0 && budget>0) {
+            avatar.setImageResource(R.drawable.happy);
+            comment.setText("Κι ενώ το ρολόι μηδένισε...τα λεφτά δεν τελείωσαν: ΕΠΙΤΥΧΙΑ!");
             return;
         }
 
         double moneyPerDay = budget / daysLeft;
-
         if (moneyPerDay >= 15) {
             avatar.setImageResource(R.drawable.happy);
             comment.setText("-Το πορτοφόλι σου σε φωνάζει βασιλιά!");
@@ -154,7 +159,7 @@ public class AddExpenseActivity extends AppCompatActivity {
             comment.setText("-Ποιος άνοιξε πάλι το πορτοφόλι σου;!");
         } else {
             avatar.setImageResource(R.drawable.sad);
-            comment.setText("-Ώρα να πουλήσεις βιβλία (ή νεφρό).");
+            comment.setText("-Ώρα να πουλήσεις βιβλία (ή νεφρό)...");
         }
     }
 

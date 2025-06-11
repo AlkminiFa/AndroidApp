@@ -8,7 +8,8 @@
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.BrokeNoMore">
+        android:theme="@style/Theme.BrokeNoMore"
+        >
 
         <!-- Κύρια δραστηριότητα μετά το login -->
         <activity android:name=".HomeActivity" />
@@ -28,6 +29,8 @@
         <activity android:name=".AddExpenseActivity" />
         <activity android:name=".ChallengesActivity" />
 
+        <!-- Σχετικά με την εφαρμογή -->
+        <activity android:name=".AboutActivity" />
 
 
     </application>
