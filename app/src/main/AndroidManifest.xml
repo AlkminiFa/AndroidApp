@@ -29,6 +29,9 @@
         <activity android:name=".AddExpenseActivity" />
         <activity android:name=".ChallengesActivity" />
 
+        <!-- Η δραστηριότητα για το ιστορικό συναλλαγών -->
+        <activity android:name=".TransactionHistoryActivity" />
+
         <!-- Σχετικά με την εφαρμογή -->
         <activity android:name=".AboutActivity" />
 

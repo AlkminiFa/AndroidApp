@@ -1,4 +1,3 @@
-
 package com.example.brokenomore;
 
 import android.app.AlertDialog;
@@ -27,8 +26,12 @@ import androidx.core.view.WindowInsetsCompat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+
+
 public class HomeActivity extends AppCompatActivity {
 
+
+    // TextView για εμφάνιση του διαθέσιμου budget
     private TextView budgetAmount;
     private TextView daysInfoText;
     private int userId;
@@ -39,20 +42,20 @@ public class HomeActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home);
 
-        //μενού
+        //μενού-αρχικοποίηση και ρύθμιση Toolbar ως action bar
         Toolbar toolbar = findViewById(R.id.myToolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         }
-
+        // Προσαρμογή padding στα system bars
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-
+        // Σύνδεση μεταβλητών με τα στοιχεία του layout
         budgetAmount = findViewById(R.id.budgetAmount);
         daysInfoText = findViewById(R.id.daysInfoText);
         Button changeBudgetBtn = findViewById(R.id.changeBudgetBtn);
@@ -64,10 +67,21 @@ public class HomeActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+ // peri
+
+        Button btnTransactionHistory = findViewById(R.id.btnTransactionHistory);
+        btnTransactionHistory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this, TransactionHistoryActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
 
 
+// Ανάκτηση userId από SharedPreferences
         SharedPreferences loginPrefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
         userId = loginPrefs.getInt("userId", -1);
 
@@ -79,12 +93,12 @@ public class HomeActivity extends AppCompatActivity {
             LinearLayout layout = new LinearLayout(this);
             layout.setOrientation(LinearLayout.VERTICAL);
             layout.setPadding(50, 20, 50, 20);
-
+            // Πεδίο εισόδου για budget
             final EditText inputBudget = new EditText(this);
             inputBudget.setHint("Ποσό σε €");
             inputBudget.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
             layout.addView(inputBudget);
-
+            // Πεδίο εισόδου για ημέρες
             final EditText inputDays = new EditText(this);
             inputDays.setHint("Πλήθος ημερών");
             inputDays.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -95,35 +109,39 @@ public class HomeActivity extends AppCompatActivity {
             builder.setPositiveButton("OK", (dialog, which) -> {
                 String budgetText = inputBudget.getText().toString();
                 String daysText = inputDays.getText().toString();
-
+                // Έλεγχος αν και τα δύο πεδία είναι συμπληρωμένα
                 if (!budgetText.isEmpty() && !daysText.isEmpty()) {
                     float newBudget = Float.parseFloat(budgetText);
                     int newDays = Integer.parseInt(daysText);
 
                     String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
+
+
+                    // Δημιουργία σύνδεσης με τη SQLite βάση δεδομένων μέσω του TransactionDatabaseHelper.Αποθηκεύει ή ενημερώνει το budget του χρήστη και διαγράφει όλα τα παλιά έξοδα (νέα αρχή).
                     TransactionDatabaseHelper dbHelper = new TransactionDatabaseHelper(HomeActivity.this);
                     today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
                     dbHelper.saveOrUpdateUserBudget(userId, newBudget, newBudget, newDays, today);
                     dbHelper.deleteAllExpensesForUser(userId);//μηδενίζονται οι μπάρες
 
-
+                    //Ενημέρωση οθόνης με τα νέα δεδομένα
                     budgetAmount.setText(String.format(Locale.getDefault(), "%.2f €", newBudget));
                     showCategoryProgress(newBudget);
                     updateDaysText(newDays);
-                    updateAvatar();//avatar
+                    updateAvatar();
 
                 }
             });
 
             builder.setNegativeButton("Άκυρο", (dialog, which) -> dialog.cancel());
 
+            // Ο AlertDialog εμφανίζει ένα προσωρινό παράθυρο πάνω από την activity για είσοδο δεδομένων.
             AlertDialog dialog = builder.create();
             dialog.setOnShowListener(dialogInterface -> {
                 Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
 
-                // Αντικατέστησε τα παρακάτω με όποια χρώματα θες
+                // Χρώμα στα κουμπιά
                 positiveButton.setTextColor(android.graphics.Color.parseColor("#004225"));
                 negativeButton.setTextColor(android.graphics.Color.parseColor("#004225"));
             });
@@ -133,10 +151,11 @@ public class HomeActivity extends AppCompatActivity {
 
         });
 
-
+        //Ενεργοποίση κουμπιού καταγραφής εξόδου
         addExpenseBtn.setOnClickListener(v -> {
             Intent intent = new Intent(HomeActivity.this, AddExpenseActivity.class);
             startActivity(intent);
+            // ενημέρωση avatar σε περίπτωση που αλλάξει το budget
             updateAvatar();
         });
     }
@@ -144,15 +163,17 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        // Σύνδεση με τη βάση δεδομένων
         TransactionDatabaseHelper dbHelper = new TransactionDatabaseHelper(HomeActivity.this);
+        // Ανάκτηση των υπολειπόμενων ημερών από τη βάση
         int daysLeft = dbHelper.getDaysLeft(userId);
-
-
+        // Ανάκτηση της τελευταίας ημερομηνίας που άνοιξε η εφαρμογή
         String lastOpened = dbHelper.getLastOpenedDate(userId);
         String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-
+        // Έλεγχος αν η εφαρμογή δεν άνοιξε σήμερα
         if (!lastOpened.equals(today)) {
             try {
+                // Υπολογισμός ημερών που πέρασαν από την τελευταία χρήση
                 Date lastDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(lastOpened);
                 Date currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(today);
                 long diff = currentDate.getTime() - lastDate.getTime();
@@ -161,26 +182,27 @@ public class HomeActivity extends AppCompatActivity {
                 if (daysPassed > 0 && daysLeft > 0) {
                     daysLeft = Math.max(0, daysLeft - daysPassed);
                     lastOpened = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
                     float budget = dbHelper.getBudget(userId);
                     float initialBudget = dbHelper.getInitialBudget(userId);
 
-// Ενημερώνουμε την εγγραφή με νέο daysLeft και lastOpenedDate
+                    // Ενημέρωση του budget με νέο daysLeft και lastOpened
                     dbHelper.saveOrUpdateUserBudget(userId, budget, initialBudget, daysLeft, lastOpened);
 
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
+            // Ενημέρωση της εγγραφής με την σημερινή ημερομηνία ανεξάρτητα από το αν αφαιρέθηκαν μέρες
             float budget = dbHelper.getBudget(userId);
             float initialBudget = dbHelper.getInitialBudget(userId);
             dbHelper.saveOrUpdateUserBudget(userId, budget, initialBudget, daysLeft, today);
 
         }
 
-
+        // Ενημέρωση του UI με τα νέα δεδομένα
         updateDaysText(daysLeft);
-        updateAvatar(); //avatar
+        updateAvatar();
         float totalBudget = dbHelper.getInitialBudget(userId);
         showCategoryProgress(totalBudget);
         refreshBudget();
@@ -189,6 +211,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void refreshBudget() {
+        // Ανάκτηση και εμφάνιση του τρέχοντος budget από τη βάση
         TransactionDatabaseHelper dbHelper = new TransactionDatabaseHelper(HomeActivity.this);
         float currentBudget = dbHelper.getBudget(userId);
         budgetAmount.setText(String.format(Locale.getDefault(), "%.2f €", currentBudget));
@@ -196,6 +219,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void updateDaysText(int days) {
+        // Δημιουργία τονισμένου (bold και μεγαλύτερου) αριθμού ημερών μέσα στο κείμενο
         String fullText = "Απομένουν " + days + " ημέρες";
         int start = fullText.indexOf(String.valueOf(days));
         int end = start + String.valueOf(days).length();

@@ -2,30 +2,43 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp"
     android:background="#D0F0C0">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
+        <!-- 🔙 Toolbar με βελάκι και τίτλο -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/myToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            android:background="#D0F0C0"
+            android:elevation="4dp" />
+
+        <!-- 🐷 Κεντραρισμένος τίτλος -->
+        <TextView
+            android:id="@+id/toolbarTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Σχετικά με εμάς"
+            android:gravity="center"
+            android:textColor="#004225"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:padding="12dp" />
+
+        <!-- 📜 Κύριο κείμενο -->
         <TextView
             android:id="@+id/aboutText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:textColor="#222222"
-            android:text="Σχετικά με εμάς 🐷💸
-
-Stubadget — γιατί το student budget μπορεί να είναι και λίγο… bad!
-Σχεδιάσαμε αυτή την εφαρμογή για όλους τους φοιτητές που προσπαθούν να επιβιώσουν οικονομικά ανάμεσα σε καφέδες, νοίκια και αυγά με παξιμάδια. Η Stubadget δεν είναι απλώς μια ακόμα εφαρμογή καταγραφής εξόδων: είναι ο γουρουνένιος σου σύμμαχος στη μάχη για οικονομική επιβίωση!
-
-💡 Καταχώρησε το μηνιαίο σου budget, σημείωσε τα έξοδά σου, και δες το γουρουνάκι-avatar να αλλάζει διάθεση — γιατί, κακά τα ψέματα, και το πορτοφόλι σου έχει συναισθήματα!
-🎯 Κάθε μέρα μπορείς να δοκιμάσεις την τύχη σου με τον τροχό «Σπατάλα / No Challenge» και να δεχτείς οικονομικές προκλήσεις που ίσως σου σώσουν το τελευταίο 5ευρω.
-📊 Παρακολούθησε τις κατηγορίες των εξόδων σου με μια ματιά και απόκτησε συνείδηση του πού πάνε τα λεφτά σου — χωρίς δράματα, με λίγο χιούμορ και (αρκετή) αυτογνωσία.
-
-"
-            android:lineSpacingExtra="8dp" />
+            android:lineSpacingExtra="8dp"
+            android:padding="24dp"
+            android:text="Stubadget — γιατί το student budget μπορεί να είναι και λίγο… bad!\n\nΣχεδιάσαμε αυτή την εφαρμογή για όλους τους φοιτητές που προσπαθούν να επιβιώσουν οικονομικά ανάμεσα σε καφέδες, νοίκια και αυγά με παξιμάδια.\n\nΗ Stubadget δεν είναι απλώς μια ακόμα εφαρμογή καταγραφής εξόδων: είναι ο γουρουνένιος σου σύμμαχος στη μάχη για οικονομική επιβίωση!\n\n Καταχώρησε το μηνιαίο σου budget, σημείωσε τα έξοδά σου, και δες το γουρουνάκι-avatar να αλλάζει διάθεση — γιατί, κακά τα ψέματα, και το πορτοφόλι σου έχει συναισθήματα!\n\n Κάθε μέρα μπορείς να δοκιμάσεις την τύχη σου με τον τροχό «Σπατάλα / No Challenge» και να δεχτείς οικονομικές προκλήσεις που ίσως σου σώσουν το τελευταίο 5ευρω.\n\n Παρακολούθησε τις κατηγορίες των εξόδων σου με μια ματιά και απόκτησε συνείδηση του πού πάνε τα λεφτά σου — χωρίς δράματα, με λίγο χιούμορ και αρκετή αυτογνωσία." />
     </LinearLayout>
 </ScrollView>

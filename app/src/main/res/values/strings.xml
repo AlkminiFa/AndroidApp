@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BrokeNoMore</string>
+    <string name="app_name">StuBadget</string>
 
     <string-array name="expense_categories">
         <item>Επέλεξε κατηγορία</item>

@@ -7,6 +7,8 @@ import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.appcompat.widget.Toolbar;
+
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -49,6 +51,14 @@ public class ChallengesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_challenges);
 
+        Toolbar toolbar = findViewById(R.id.myToolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);     // βελάκι πίσω
+            getSupportActionBar().setDisplayShowTitleEnabled(false);   // όχι default τίτλος
+        }
+
+
         wheelImage = findViewById(R.id.wheelImage);
         spinButton = findViewById(R.id.spinButton);
         challengeText = findViewById(R.id.challengeText);
@@ -72,6 +82,12 @@ public class ChallengesActivity extends AppCompatActivity {
                 spinWheel();
             }
         });
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     private void spinWheel() {

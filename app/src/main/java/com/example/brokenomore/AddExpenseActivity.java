@@ -13,6 +13,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -21,12 +25,24 @@ import java.util.Locale;
 public class AddExpenseActivity extends AppCompatActivity {
     private int userId;
 
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
 
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_expense);
+        Toolbar toolbar = findViewById(R.id.myToolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);     // βελάκι πίσω
+            getSupportActionBar().setDisplayShowTitleEnabled(false);   // όχι default τίτλος
+        }
+
+
 
         SharedPreferences loginPrefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
         userId = loginPrefs.getInt("userId", -1);
@@ -123,6 +139,11 @@ public class AddExpenseActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
     //avatar
     private void updateAvatar() {
         ImageView avatar = findViewById(R.id.avatarImage);
